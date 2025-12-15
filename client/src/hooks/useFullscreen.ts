@@ -5,7 +5,7 @@ export function useFullscreen() {
 
   useEffect(() => {
     const handleChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
+      setIsFullscreen(!!document.fullscreenElement || !!(document as any).webkitFullscreenElement);
     };
 
     document.addEventListener("fullscreenchange", handleChange);
@@ -25,24 +25,27 @@ export function useFullscreen() {
         await elem.requestFullscreen();
       } else if ((elem as any).webkitRequestFullscreen) {
         await (elem as any).webkitRequestFullscreen();
+      } else if ((elem as any).webkitEnterFullscreen) {
+        await (elem as any).webkitEnterFullscreen();
       } else if ((elem as any).msRequestFullscreen) {
         await (elem as any).msRequestFullscreen();
       }
       
       setIsFullscreen(true);
     } catch (error) {
-      console.log("Fullscreen not supported:", error);
+      console.log("Fullscreen request failed or not supported - continuing without fullscreen");
     }
   }, []);
 
   const exitFullscreen = useCallback(async () => {
     try {
-      if (document.exitFullscreen) {
-        await document.exitFullscreen();
-      } else if ((document as any).webkitExitFullscreen) {
-        await (document as any).webkitExitFullscreen();
+      if (document.fullscreenElement || (document as any).webkitFullscreenElement) {
+        if (document.exitFullscreen) {
+          await document.exitFullscreen();
+        } else if ((document as any).webkitExitFullscreen) {
+          await (document as any).webkitExitFullscreen();
+        }
       }
-      
       setIsFullscreen(false);
     } catch (error) {
       console.log("Exit fullscreen failed:", error);

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface ParticlesProps {
   isReduced?: boolean;
@@ -8,13 +8,24 @@ export function Particles({ isReduced = false }: ParticlesProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const heartIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const starIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [prefersReduced, setPrefersReduced] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReduced(mediaQuery.matches);
+    
+    const handler = (e: MediaQueryListEvent) => setPrefersReduced(e.matches);
+    mediaQuery.addEventListener('change', handler);
+    return () => mediaQuery.removeEventListener('change', handler);
+  }, []);
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    const heartDelay = isReduced ? 1400 : 850;
-    const starDelay = isReduced ? 400 : 250;
+    const shouldReduce = isReduced || prefersReduced;
+    const heartDelay = shouldReduce ? 1400 : 850;
+    const starDelay = shouldReduce ? 400 : 250;
 
     const createHeart = () => {
       const heart = document.createElement("div");

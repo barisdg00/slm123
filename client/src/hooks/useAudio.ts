@@ -14,6 +14,7 @@ export function useAudio(options: UseAudioOptions = {}) {
   } = options;
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
   const fadeIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -21,8 +22,20 @@ export function useAudio(options: UseAudioOptions = {}) {
   const unlock = useCallback(() => {
     if (isUnlocked) return;
     
+    try {
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      if (AudioContextClass && !audioContextRef.current) {
+        audioContextRef.current = new AudioContextClass();
+        if (audioContextRef.current.state === 'suspended') {
+          audioContextRef.current.resume();
+        }
+      }
+    } catch (e) {
+      console.log("AudioContext not supported");
+    }
+
     const audio = new Audio();
-    audio.volume = 0;
+    audio.volume = 0.01;
     audio.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA";
     
     const playPromise = audio.play();
@@ -35,8 +48,9 @@ export function useAudio(options: UseAudioOptions = {}) {
         .catch(() => {
           setIsUnlocked(true);
         });
+    } else {
+      setIsUnlocked(true);
     }
-    setIsUnlocked(true);
   }, [isUnlocked]);
 
   const fadeIn = useCallback((audio: HTMLAudioElement, targetVolume: number, duration: number) => {
@@ -52,7 +66,9 @@ export function useAudio(options: UseAudioOptions = {}) {
 
     fadeIntervalRef.current = setInterval(() => {
       currentStep++;
-      audio.volume = Math.min(volumeStep * currentStep, targetVolume);
+      try {
+        audio.volume = Math.min(volumeStep * currentStep, targetVolume);
+      } catch (e) {}
       
       if (currentStep >= steps) {
         if (fadeIntervalRef.current) {
@@ -70,6 +86,13 @@ export function useAudio(options: UseAudioOptions = {}) {
       }
 
       const startVolume = audio.volume;
+      if (startVolume === 0) {
+        audio.pause();
+        audio.currentTime = 0;
+        resolve();
+        return;
+      }
+
       const steps = 20;
       const stepTime = duration / steps;
       const volumeStep = startVolume / steps;
@@ -77,7 +100,9 @@ export function useAudio(options: UseAudioOptions = {}) {
 
       fadeIntervalRef.current = setInterval(() => {
         currentStep++;
-        audio.volume = Math.max(startVolume - (volumeStep * currentStep), 0);
+        try {
+          audio.volume = Math.max(startVolume - (volumeStep * currentStep), 0);
+        } catch (e) {}
         
         if (currentStep >= steps) {
           if (fadeIntervalRef.current) {
@@ -97,16 +122,28 @@ export function useAudio(options: UseAudioOptions = {}) {
       await fadeOut(audioRef.current, fadeOutDuration);
     }
 
-    const audio = new Audio(src);
+    const audio = new Audio();
     audio.volume = 0;
+    audio.preload = "auto";
     audioRef.current = audio;
+
+    audio.src = src;
 
     try {
       await audio.play();
       fadeIn(audio, volume, fadeInDuration);
       setIsPlaying(true);
     } catch (error) {
-      console.log("Audio play failed:", error);
+      console.log("Audio play failed, trying with user interaction:", error);
+      audio.addEventListener('canplaythrough', async () => {
+        try {
+          await audio.play();
+          fadeIn(audio, volume, fadeInDuration);
+          setIsPlaying(true);
+        } catch (e) {
+          console.log("Audio still failed:", e);
+        }
+      }, { once: true });
     }
   }, [fadeIn, fadeOut, fadeInDuration, fadeOutDuration, volume]);
 
@@ -119,8 +156,12 @@ export function useAudio(options: UseAudioOptions = {}) {
   }, [fadeOut, fadeOutDuration]);
 
   const vibrate = useCallback((pattern: number | number[] = 50) => {
-    if (navigator.vibrate) {
-      navigator.vibrate(pattern);
+    try {
+      if ('vibrate' in navigator) {
+        navigator.vibrate(pattern);
+      }
+    } catch (e) {
+      console.log("Vibration not supported");
     }
   }, []);
 
