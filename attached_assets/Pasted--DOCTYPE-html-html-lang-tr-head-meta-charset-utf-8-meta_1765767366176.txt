@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Doğum Günü Sürprizi</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ========== SAYFA 1: HOŞGELDİN ========== -->
+  <section class="page active" id="page1">
+    <h1 class="welcome" id="welcomeText">slmcnlar</h1>
+    <button class="next-btn" onclick="nextPage()">Devam Et</button>
+  </section>
+
+  <!-- ========== KİŞİ SAYFALARI (2–7) ========== -->
+  <section class="page" id="page2">
+    <div class="photo-box"><img src="kisi1.jpg" /></div>
+    <div class="message-box">
+      <h2 class="person-title" data-name="Kişi 1"></h2>
+      <p class="msg-text" data-fulltext="Buraya kişi 1'in uzun mesajı."></p>
+    </div>
+    <audio class="personMusic" src="audio/kisi1.mp3"></audio>
+    <button class="next-btn" onclick="nextPage()">Devam Et</button>
+  </section>
+
+  <section class="page" id="page3">
+    <div class="photo-box"><img src="kisi2.jpg" /></div>
+    <div class="message-box">
+      <h2 class="person-title" data-name="Kişi 2"></h2>
+      <p class="msg-text" data-fulltext="Buraya kişi 2'nin mesajı."></p>
+    </div>
+    <audio class="personMusic" src="audio/kisi2.mp3"></audio>
+    <button class="next-btn" onclick="nextPage()">Devam Et</button>
+  </section>
+
+  <section class="page" id="page4">
+    <div class="photo-box"><img src="kisi3.jpg" /></div>
+    <div class="message-box">
+      <h2 class="person-title" data-name="Kişi 3"></h2>
+      <p class="msg-text" data-fulltext="Buraya kişi 3'ün mesajı."></p>
+    </div>
+    <audio class="personMusic" src="audio/kisi3.mp3"></audio>
+    <button class="next-btn" onclick="nextPage()">Devam Et</button>
+  </section>
+
+  <section class="page" id="page5">
+    <div class="photo-box"><img src="kisi4.jpg" /></div>
+    <div class="message-box">
+      <h2 class="person-title" data-name="Kişi 4"></h2>
+      <p class="msg-text" data-fulltext="Buraya kişi 4'ün mesajı."></p>
+    </div>
+    <audio class="personMusic" src="audio/kisi4.mp3"></audio>
+    <button class="next-btn" onclick="nextPage()">Devam Et</button>
+  </section>
+
+  <section class="page" id="page6">
+    <div class="photo-box"><img src="kisi5.jpg" /></div>
+    <div class="message-box">
+      <h2 class="person-title" data-name="Kişi 5"></h2>
+      <p class="msg-text" data-fulltext="Buraya kişi 5'in mesajı."></p>
+    </div>
+    <audio class="personMusic" src="audio/kisi5.mp3"></audio>
+    <button class="next-btn" onclick="nextPage()">Devam Et</button>
+  </section>
+
+  <section class="page" id="page7">
+    <div class="photo-box special"><img src="kisi6.jpg" /></div>
+    <div class="message-box">
+      <h2 class="person-title" data-name="Sen"></h2>
+      <p class="msg-text" data-fulltext="Son kişi: senin mesajın. Özel efektler burada."></p>
+    </div>
+    <audio class="personMusic" src="audio/sen.mp3"></audio>
+    <button class="next-btn" onclick="nextPage()">Devam Et</button>
+  </section>
+
+  <!-- ========== SAYFA 8: FİNAL ========== -->
+  <section class="page" id="page8">
+    <div class="circle-stage">
+      <div class="center-photo"><img src="center.jpg" /></div>
+      <div class="orbit orbit1"><img src="kisi1.jpg" /></div>
+      <div class="orbit orbit2"><img src="kisi2.jpg" /></div>
+      <div class="orbit orbit3"><img src="kisi3.jpg" /></div>
+      <div class="orbit orbit4"><img src="kisi4.jpg" /></div>
+      <div class="orbit orbit5"><img src="kisi5.jpg" /></div>
+      <div class="orbit orbit6"><img src="kisi6.jpg" /></div>
+    </div>
+    <p class="final-note">🎉 Hepsi bir arada — iyi ki doğdun! 🎉</p>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>
