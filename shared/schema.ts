@@ -42,10 +42,12 @@ export const defaultPersons: Person[] = [
     id: 3,
     name: "ASLI",
     photo: "/photos/kisi3.jpg",
-    message:"İyi ki doğdun bıcırığımm🎂
-             "Geçen sene yurtta tanıştık ama sanki hep vardın. Çok şey öğrendim sizden akıllı, güzel kızım benim..
-            " Tatlılığın zaten olay, biraz kafadan kırık olman da seni sen yapan en güzel detay 😉"
-            " Gülüşün hep yüzünde olsun, hayallerin tek tek gerçekleşsin. İyi ki varsın, iyi ki tanımışım seni 🧡.",
+    message: `İyi ki doğdun bıcırığımm 🎂
+    Geçen sene yurtta tanıştık ama sanki hep vardın. Çok şey öğrendim sizden akıllı, güzel kızım benim.
+    Tatlılığın zaten olay, biraz kafadan kırık olman da seni sen yapan en güzel detay 😉
+    Gülüşün hep yüzünde olsun, hayallerin tek tek gerçekleşsin.
+    İyi ki varsın, iyi ki tanımışım seni 🧡`
+
     audioSrc: "/audio/kisi3.mp3",
   },
   {
