@@ -37,7 +37,7 @@ export default function BirthdaySurprise() {
     setIsLoading(false);
   }, []);
 
-  const handleNextPage = useCallback(() => {
+  const handleNextPage = useCallback(async () => {
     if (currentPage >= totalPages) return;
 
     if (currentPage === 1) {
@@ -45,7 +45,8 @@ export default function BirthdaySurprise() {
       enterFullscreen();
     }
 
-    stop();
+    // önce mevcut sesi durdur ve bitmesini bekle
+    await stop();
     vibrate(30);
 
     const nextPage = currentPage + 1;
@@ -55,7 +56,7 @@ export default function BirthdaySurprise() {
       const personIndex = nextPage - 2;
       const person = defaultPersons[personIndex];
       if (person?.audioSrc) {
-        play(person.audioSrc);
+        await play(person.audioSrc);
       }
     }
 
@@ -67,7 +68,7 @@ export default function BirthdaySurprise() {
     if (nextPage === totalPages) {
       // Son sayfa aktif olduğunda özel bir merkez şarkısı çal
       if ("/audio/center.mp3") {
-        play("/audio/center.mp3");
+        await play("/audio/center.mp3");
       }
 
       setTimeout(() => setShowHeartRain(true), 900);
@@ -75,10 +76,11 @@ export default function BirthdaySurprise() {
     }
   }, [currentPage, totalPages, play, stop, unlock, vibrate, enterFullscreen]);
 
-  const handlePrevPage = useCallback(() => {
+  const handlePrevPage = useCallback(async () => {
     if (currentPage <= 1) return;
     
-    stop();
+    // önce mevcut sesi durdur ve bitmesini bekle
+    await stop();
     vibrate(20);
     
     const prevPage = currentPage - 1;
@@ -88,7 +90,7 @@ export default function BirthdaySurprise() {
       const personIndex = prevPage - 2;
       const person = defaultPersons[personIndex];
       if (person?.audioSrc) {
-        play(person.audioSrc);
+        await play(person.audioSrc);
       }
     }
   }, [currentPage, totalPages, play, stop, vibrate]);
