@@ -125,6 +125,10 @@ export function useAudio(options: UseAudioOptions = {}) {
     const audio = new Audio();
     audio.volume = 0;
     audio.preload = "auto";
+
+    // enable native looping so the track restarts automatically when it ends
+    audio.loop = true;
+
     audioRef.current = audio;
 
     audio.src = src;
