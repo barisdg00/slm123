@@ -65,6 +65,11 @@ export default function BirthdaySurprise() {
     }
 
     if (nextPage === totalPages) {
+      // Son sayfa aktif olduğunda özel bir merkez şarkısı çal
+      if ("/audio/center.mp3") {
+        play("/audio/center.mp3");
+      }
+
       setTimeout(() => setShowHeartRain(true), 900);
       setTimeout(() => setShowHeartRain(false), 3000);
     }
