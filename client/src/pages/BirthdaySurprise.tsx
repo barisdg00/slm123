@@ -30,6 +30,7 @@ export default function BirthdaySurprise() {
   const totalPages = defaultPersons.length + 2;
   const { play, stop, unlock, vibrate } = useAudio({ volume: 0.5 });
   const { enterFullscreen } = useFullscreen();
+  const isTransitioningRef = useRef(false);
 
   const imagesToPreload = defaultPersons.map(p => p.photo);
 
@@ -39,6 +40,8 @@ export default function BirthdaySurprise() {
 
   const handleNextPage = useCallback(async () => {
     if (currentPage >= totalPages) return;
+    if (isTransitioningRef.current) return;
+    isTransitioningRef.current = true;
 
     if (currentPage === 1) {
       unlock();
@@ -74,15 +77,19 @@ export default function BirthdaySurprise() {
       setTimeout(() => setShowHeartRain(true), 900);
       setTimeout(() => setShowHeartRain(false), 3000);
     }
+
+    isTransitioningRef.current = false;
   }, [currentPage, totalPages, play, stop, unlock, vibrate, enterFullscreen]);
 
   const handlePrevPage = useCallback(async () => {
     if (currentPage <= 1) return;
-    
+    if (isTransitioningRef.current) return;
+    isTransitioningRef.current = true;
+
     // önce mevcut sesi durdur ve bitmesini bekle
     await stop();
     vibrate(20);
-    
+
     const prevPage = currentPage - 1;
     setCurrentPage(prevPage);
 
@@ -93,8 +100,8 @@ export default function BirthdaySurprise() {
         await play(person.audioSrc);
       }
     }
-  }, [currentPage, totalPages, play, stop, vibrate]);
 
+    isTransitioningRef.current = false;
   useEffect(() => {
     let lastShake = 0;
     
