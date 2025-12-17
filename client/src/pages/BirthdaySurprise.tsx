@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { defaultPersons } from "@shared/schema";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { WelcomePage } from "@/components/WelcomePage";
@@ -26,7 +26,7 @@ export default function BirthdaySurprise() {
   const [currentPage, setCurrentPage] = useState(1);
   const [showHeartRain, setShowHeartRain] = useState(false);
   const [showStarBurst, setShowStarBurst] = useState(false);
-  
+
   const totalPages = defaultPersons.length + 2;
   const { play, stop, unlock, vibrate } = useAudio({ volume: 0.5 });
   const { enterFullscreen } = useFullscreen();
@@ -39,8 +39,7 @@ export default function BirthdaySurprise() {
   }, []);
 
   const handleNextPage = useCallback(async () => {
-    if (currentPage >= totalPages) return;
-    if (isTransitioningRef.current) return;
+    if (currentPage >= totalPages || isTransitioningRef.current) return;
     isTransitioningRef.current = true;
 
     if (currentPage === 1) {
@@ -48,7 +47,6 @@ export default function BirthdaySurprise() {
       enterFullscreen();
     }
 
-    // önce mevcut sesi durdur ve bitmesini bekle
     await stop();
     vibrate(30);
 
@@ -58,9 +56,7 @@ export default function BirthdaySurprise() {
     if (nextPage >= 2 && nextPage <= totalPages - 1) {
       const personIndex = nextPage - 2;
       const person = defaultPersons[personIndex];
-      if (person?.audioSrc) {
-        await play(person.audioSrc);
-      }
+      if (person?.audioSrc) await play(person.audioSrc);
     }
 
     if (nextPage === 7) {
@@ -69,11 +65,7 @@ export default function BirthdaySurprise() {
     }
 
     if (nextPage === totalPages) {
-      // Son sayfa aktif olduğunda özel bir merkez şarkısı çal
-      if ("/audio/center.mp3") {
-        await play("/audio/center.mp3");
-      }
-
+      await play("/audio/center.mp3");
       setTimeout(() => setShowHeartRain(true), 900);
       setTimeout(() => setShowHeartRain(false), 3000);
     }
@@ -82,11 +74,9 @@ export default function BirthdaySurprise() {
   }, [currentPage, totalPages, play, stop, unlock, vibrate, enterFullscreen]);
 
   const handlePrevPage = useCallback(async () => {
-    if (currentPage <= 1) return;
-    if (isTransitioningRef.current) return;
+    if (currentPage <= 1 || isTransitioningRef.current) return;
     isTransitioningRef.current = true;
 
-    // önce mevcut sesi durdur ve bitmesini bekle
     await stop();
     vibrate(20);
 
@@ -96,19 +86,19 @@ export default function BirthdaySurprise() {
     if (prevPage >= 2 && prevPage <= totalPages - 1) {
       const personIndex = prevPage - 2;
       const person = defaultPersons[personIndex];
-      if (person?.audioSrc) {
-        await play(person.audioSrc);
-      }
+      if (person?.audioSrc) await play(person.audioSrc);
     }
 
     isTransitioningRef.current = false;
+  }, [currentPage, totalPages, play, stop, vibrate]);
+
   useEffect(() => {
     let lastShake = 0;
-    
+
     const handleDeviceMotion = (e: DeviceMotionEvent) => {
       const a = e.accelerationIncludingGravity;
       if (!a) return;
-      
+
       const power = Math.abs(a.x || 0) + Math.abs(a.y || 0) + Math.abs(a.z || 0);
       if (power > 28 && Date.now() - lastShake > 1200) {
         setShowHeartRain(true);
@@ -122,16 +112,14 @@ export default function BirthdaySurprise() {
     return () => window.removeEventListener("devicemotion", handleDeviceMotion);
   }, [vibrate]);
 
-  if (isLoading) {
-    return <LoadingScreen imagesToPreload={imagesToPreload} onLoadComplete={handleLoadComplete} />;
-  }
+  if (isLoading) return <LoadingScreen imagesToPreload={imagesToPreload} onLoadComplete={handleLoadComplete} />;
 
   return (
     <div className="birthday-app" data-testid="birthday-app">
       <Particles isReduced={true} />
-      
+
       <WelcomePage isActive={currentPage === 1} />
-      
+
       {defaultPersons.map((person, index) => (
         <PersonPage
           key={person.id}
@@ -141,12 +129,8 @@ export default function BirthdaySurprise() {
           bgGradient={bgGradients[index + 2] || bgGradients[2]}
         />
       ))}
-      
-      <FinalPage
-        persons={defaultPersons}
-        centerPhoto="/photos/center.jpg"
-        isActive={currentPage === totalPages}
-      />
+
+      <FinalPage persons={defaultPersons} centerPhoto="/photos/center.jpg" isActive={currentPage === totalPages} />
 
       <NavigationButton
         onClick={handleNextPage}
@@ -172,7 +156,6 @@ export default function BirthdaySurprise() {
           user-select: none;
           -webkit-user-select: none;
         }
-
         .page {
           position: absolute;
           inset: 0;
@@ -188,23 +171,9 @@ export default function BirthdaySurprise() {
           will-change: transform, opacity;
           z-index: 2;
         }
-
-        .page.active {
-          transform: translateX(0);
-          opacity: 1;
-        }
-
-        .page.left {
-          transform: translateX(-100%);
-          opacity: 0;
-        }
-
-        @media (max-width: 700px) {
-          .page {
-            padding: 20px;
-            padding-bottom: 90px;
-          }
-        }
+        .page.active { transform: translateX(0); opacity: 1; }
+        .page.left { transform: translateX(-100%); opacity: 0; }
+        @media (max-width: 700px) { .page { padding: 20px; padding-bottom: 90px; } }
       `}</style>
     </div>
   );
