@@ -35,7 +35,7 @@ export const defaultPersons: Person[] = [
     id: 2,
     name: "ELİF",
     photo: "/photos/kisi2.jpg",
-    message: "Buraya kişi 2'nin mesajı gelecek. Harika bir insansın.",
+    message: "Elifikoçikom doğum günün kutlu olsun. Seni çok seviyorum. Kafanı ısırırım. Fav toxic ilişkimin parçasısın. Elimizde büyüdün elimizde. Nice kavga ediceğimiz yıllara.",
     audioSrc: "/audio/kisi2.mp3",
   },
   {
