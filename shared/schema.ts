@@ -54,7 +54,7 @@ export const defaultPersons: Person[] = [
     id: 4,
     name: "OĞUZHAN",
     photo: "/photos/kisi4.jpg",
-    message: "Doğum günün kutlu olsun mor dudaklı Telif\nYaş büyüdü (şüpheli), şeytanlık büyüdü (kesinlikle) sonumuz hayır olsun",
+    message: "Doğum günün kutlu olsun mor dudaklı Telif Yaş büyüdü (şüpheli), şeytanlık büyüdü (kesinlikle) sonumuz hayır olsun",
     audioSrc: "/audio/kisi4.mp3",
   },
   {
