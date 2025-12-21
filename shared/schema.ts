@@ -68,7 +68,7 @@ export const defaultPersons: Person[] = [
     id: 6,
     name: "BARIŞIN",
     photo: "/photos/kisi6.jpg",
-    message: "Ve en özel kişi: Sen. İyi ki varsın, iyi ki doğdun. Seni çok ama çok seviyorum!",
+    message: "ağaççççççççççççççççççççççççççççççççççççççççççççççççççççççççççç",
     audioSrc: "/audio/sen.mp3",
     isSpecial: true,
   },
